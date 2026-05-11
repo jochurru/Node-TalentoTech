@@ -13,8 +13,10 @@ const [, , method, resource, ...args] = process.argv;
 
 // GET articles / GET articles/<id>
 const getArticles = async (resource, args) => {
-    const resourcePath = args.length ? `${resource}/${args[0]}` : resource;
-
+    if (args.length && isNaN(args[0])) {
+        console.error("\n❌ El ID tiene que ser un número. Ejemplo: npm run start GET articles 3");
+        return;
+    }
     try {
         const { data } = await axios.get(`${BASE_URL}/${resourcePath}`);
 if (Array.isArray(data)) {
@@ -45,7 +47,10 @@ const createArticle = async (resource, args) => {
         console.error("\n❌ Faltan datos. Uso: npm run start POST articles <name> <price> <description>");
         return;
     }
-
+    if (isNaN(price)) {
+        console.error("\n❌ El precio tiene que ser un número. Ejemplo: npm run start POST articles \"Remera\" 4500 \"descripcion\"");
+        return;
+    }
     try {
         const { data } = await axios.post(`${BASE_URL}/${resource}`, {
             name,
@@ -66,7 +71,14 @@ const createArticle = async (resource, args) => {
 
 // DELETE articles/<id>
 const deleteArticle = async (resource, args) => {
-    const resourcePath = args.length ? `${resource}/${args[0]}` : resource;
+    if (!args.length) {
+        console.error("\n❌ Tenés que indicar un ID. Ejemplo: npm run start DELETE articles 3");
+        return;
+    }
+    if (isNaN(args[0])) {
+        console.error("\n❌ El ID tiene que ser un número. Ejemplo: npm run start DELETE articles 3");
+        return;
+    }
 
     try {
         const { data } = await axios.delete(`${BASE_URL}/${resourcePath}`);
